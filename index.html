@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Replace with your title</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v1.7.0/mapbox-gl.css" rel="stylesheet" />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.1/tabletop.min.js'></script>
+    
+
+  </head>
+  <style>
+    body {
+      background: #404040;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    #map {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      bottom: 0;
+    }
+
+
+    .mapboxgl-popup {
+      padding-bottom: 5px;
+    } 
+      
+      .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+      .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip,
+      .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip{
+          border-top-color: #453C90;
+      }
+      .mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+      .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip,
+      .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip{
+          border-bottom-color: #453C90;
+      }
+      .mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+          border-right-color: #453C90;
+      }
+      .mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+          border-left-color: #453C90;
+      }
+      
+      
+      
+    .mapboxgl-popup-close-button {
+      display: none;
+    }
+
+    .mapboxgl-popup-content {
+      font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+      padding: 0;
+      width: 250px;
+      pointer-events: none;
+        border: 2px solid #453C90;
+    }
+
+    .mapboxgl-popup-content-wrapper {
+      padding: 1%;
+    }
+
+    .mapboxgl-popup-content h3 {
+      background: #453C90;
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      display: block;
+      padding: 15px;
+      font-weight: 700;
+      
+    }
+
+    .mapboxgl-popup-content p {
+      margin: 0;
+      display: block;
+      margin: 8px 3px 8px 10px;
+      font-weight: 400;
+    }
+
+    .mapboxgl-container {
+      cursor: pointer;
+    }
+
+
+
+    
+      
+      .mapboxgl-marker {
+  cursor: pointer;
+}
+
+  </style>
+
+  <body>
+
+    <div id="map"></div>
+    <script>
+      var transformRequest = (url, resourceType) => {
+        var isMapboxRequest =
+          url.slice(8, 22) === "api.mapbox.com" ||
+          url.slice(10, 26) === "tiles.mapbox.com";
+        return {
+          url: isMapboxRequest
+            ? url.replace("?", "?pluginName=sheetMapper&")
+            : url
+        };
+      };
+
+      //YOUR TURN: add your Mapbox access token 
+      mapboxgl.accessToken = 'pk.eyJ1Ijoic3RldmVuYXR0ZXdlbGwiLCJhIjoiYmY3YmI3NWViZmE1OTA2N2M5OGNlODQ5NjIyNGZhZmEifQ.hhve7suFrt-4vc6-m390iQ';
+      var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: "mapbox://styles/stevenattewell/cjko4tocw8tci2qruop33r32p", //YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+        center: [-0.118092, 51.509865], // starting position [lng, lat]
+        zoom: 9, // starting zoom
+        transformRequest: transformRequest
+      });
+
+
+      map.on("load", function() {
+        init();
+      });
+
+      // Initialize Tabletop to access your table
+      function init() {
+        Tabletop.init({
+          // YOUR TURN: change 'key' value to point to your spreadsheet
+          key: 'https://docs.google.com/spreadsheets/d/1uJRo5A_6C9afeTJZMBd_6rrN0VsVIzU5T4PkmW_iqgc/edit?usp=sharing',
+          // once Tabletop has loaded the data, it passes it to the 'callback' function, 'addPoints', defined below
+          callback: addPoints,
+          simpleSheet: true
+        });
+      }
+
+
+      // create a function called addPoints that iterates through your table (row by row) to create markers and popups
+      function addPoints(data) {
+
+        // iterate through your table to set the marker to lat/long values for each row
+
+        data.forEach(function(row) {
+
+          // create a variable for your popup and populate your popup with information from your table
+            
+            popUpContent = '<h3>' + row.Name + '</h3>';
+            if (row.Location.length > 0){
+                popUpContent += '<p><b>Location: ' + '</b>' + row.Location + '</p>';
+            }
+            if (row.Location.length > 0){
+                popUpContent += '<p><b>Borough: ' + '</b>' + row.Borough + '</p>';
+            }
+            if (row.Organisation.length > 0){
+                popUpContent += '<p><b>Organisation: ' + '</b>' + row.Organisation + '</p>';
+            }
+            if (row.NearestPostcode.length > 0){
+                popUpContent += '<p><b>Nearest postcode: ' + '</b>' + row.NearestPostcode + '</p>';
+            }
+            popUpContent += '<p><a style="pointer-events: all ;" target="directions" href="https://www.google.com/maps/dir/?api=1&dir_action=navigate&destination=' + row.Latitude + ',' + row.Longitude + '">Get directions</a></p>'
+            
+            
+           
+            
+          var popup = new mapboxgl.Popup()
+            .setHTML(popUpContent); 
+            
+            // use the table to populate your popup with text
+
+
+          // create a variable for your markup and add it to the map 
+          var marker = new mapboxgl.Marker({
+              color: '#74955B'
+            })
+            .setLngLat([row.Longitude, row.Latitude])
+            .setPopup(popup)
+            .addTo(map); // add the marker to the map
+
+
+        });
+      }
+
+    </script>
+  </body>
+
+</html>
