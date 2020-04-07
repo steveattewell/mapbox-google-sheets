@@ -1,9 +1,11 @@
 # mapbox-google-sheets
 Linking mapbox to a Google sheet containing locations of allotments in london
 
-# See the demo
+# See the live demo
 
-Demo is here: https://steveattewell.github.io/mapbox-google-sheets/
+Live demo: https://steveattewell.github.io/mapbox-google-sheets/
+
+The Google spreadsheet that powers the map is here: https://docs.google.com/spreadsheets/d/1uJRo5A_6C9afeTJZMBd_6rrN0VsVIzU5T4PkmW_iqgc/edit?usp=sharing
 
 # About this code
 The code for this demo was adpated from this MapBox blog post https://www.mapbox.com/impact-tools/sheet-mapper/
